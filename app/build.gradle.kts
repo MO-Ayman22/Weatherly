@@ -76,7 +76,6 @@ dependencies {
     implementation(libs.lottie.compose)
     implementation (libs.hilt.android)
     ksp (libs.hilt.compiler)
-
     implementation(libs.androidx.hilt.navigation.compose)
     implementation(libs.kotlinx.serialization.json)
     implementation(libs.androidx.compose.material.icons.extended)
