@@ -10,6 +10,11 @@ class LocationRepositoryImpl @Inject constructor (
     private val locationTracker: LocationTracker,
     private val preferencesDataSource: PreferencesDataSource
 ): LocationRepository {
+
+    override fun hasLocationPermission(): Boolean {
+        return locationTracker.hasLocationPermission()
+    }
+
     override suspend fun getCurrentLocation(): Location? {
         return locationTracker.getCurrentLocation()
     }

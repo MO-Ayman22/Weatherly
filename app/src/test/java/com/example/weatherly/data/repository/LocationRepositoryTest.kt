@@ -92,4 +92,17 @@ class LocationRepositoryTest {
         assertThat(result, `is`(1f to 2f))
         verify { dataSource.getSavedLocation() }
     }
+
+    @Test
+    fun hasLocationPermission_returnsTrackerValue() {
+        // Arrange
+        every { tracker.hasLocationPermission() } returns true
+
+        // Act
+        val result = repository.hasLocationPermission()
+
+        // Assert
+        assertThat(result, `is`(true))
+        verify { tracker.hasLocationPermission() }
+    }
 }

@@ -15,5 +15,4 @@ class WeatherRepositoryImpl @Inject constructor(
     override fun setFirstTime(isFirst: Boolean) {
         prefsDataSource.setFirstTime(isFirst)
     }
-
 }

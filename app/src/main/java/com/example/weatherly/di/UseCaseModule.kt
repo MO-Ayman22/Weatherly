@@ -4,6 +4,7 @@ import com.example.weatherly.domain.repository.LocationRepository
 import com.example.weatherly.domain.repository.WeatherRepository
 import com.example.weatherly.domain.usecase.GetCurrentLocationUseCase
 import com.example.weatherly.domain.usecase.GetSavedLocationUseCase
+import com.example.weatherly.domain.usecase.HasLocationPermissionUseCase
 import com.example.weatherly.domain.usecase.IsFirstTimeUseCase
 import com.example.weatherly.domain.usecase.IsGpsEnabledUseCase
 import com.example.weatherly.domain.usecase.SaveLocationUseCase
@@ -64,5 +65,13 @@ object UseCaseModule {
         repository: LocationRepository
     ): SaveLocationUseCase {
         return SaveLocationUseCase(repository)
+    }
+
+    @Provides
+    @Singleton
+    fun provideHasLocationPermissionUseCase(
+        repository: LocationRepository
+    ): HasLocationPermissionUseCase {
+        return HasLocationPermissionUseCase(repository)
     }
 }

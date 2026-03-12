@@ -37,8 +37,9 @@ object LocationModule {
     @Singleton
     fun provideLocationTracker(
         fusedClient: FusedLocationProviderClient,
-        locationManager: LocationManager
+        locationManager: LocationManager,
+        @ApplicationContext context: Context
     ): LocationTracker {
-        return LocationTrackerImpl(fusedClient, locationManager)
+        return LocationTrackerImpl(fusedClient, locationManager,context)
     }
 }
