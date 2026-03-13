@@ -3,10 +3,14 @@ package com.example.weatherly.di
 import com.example.weatherly.domain.repository.LocationRepository
 import com.example.weatherly.domain.repository.WeatherRepository
 import com.example.weatherly.domain.usecase.GetCurrentLocationUseCase
+import com.example.weatherly.domain.usecase.GetCurrentWeatherUseCase
+import com.example.weatherly.domain.usecase.GetDailyWeatherUseCase
+import com.example.weatherly.domain.usecase.GetHourlyWeatherUseCase
 import com.example.weatherly.domain.usecase.GetSavedLocationUseCase
 import com.example.weatherly.domain.usecase.HasLocationPermissionUseCase
 import com.example.weatherly.domain.usecase.IsFirstTimeUseCase
 import com.example.weatherly.domain.usecase.IsGpsEnabledUseCase
+import com.example.weatherly.domain.usecase.RefreshWeatherUseCase
 import com.example.weatherly.domain.usecase.SaveLocationUseCase
 import com.example.weatherly.domain.usecase.SetFirstTimeUseCase
 import dagger.Module
@@ -38,7 +42,7 @@ object UseCaseModule {
     @Provides
     @Singleton
     fun provideGetCurrentLocationUseCase(
-       repository: LocationRepository
+        repository: LocationRepository
     ): GetCurrentLocationUseCase {
         return GetCurrentLocationUseCase(repository)
     }
@@ -73,5 +77,37 @@ object UseCaseModule {
         repository: LocationRepository
     ): HasLocationPermissionUseCase {
         return HasLocationPermissionUseCase(repository)
+    }
+
+    @Provides
+    @Singleton
+    fun provideRefreshWeatherUseCase(
+        repository: WeatherRepository
+    ): RefreshWeatherUseCase {
+        return RefreshWeatherUseCase(repository)
+    }
+
+    @Provides
+    @Singleton
+    fun provideGetDailyWeatherUseCase(
+        repository: WeatherRepository
+    ): GetDailyWeatherUseCase {
+        return GetDailyWeatherUseCase(repository)
+    }
+
+    @Provides
+    @Singleton
+    fun provideGetHourlyWeatherUseCase(
+        repository: WeatherRepository
+    ): GetHourlyWeatherUseCase {
+        return GetHourlyWeatherUseCase(repository)
+    }
+
+    @Provides
+    @Singleton
+    fun provideGetCurrentWeatherUseCase(
+        repository: WeatherRepository
+    ): GetCurrentWeatherUseCase {
+        return GetCurrentWeatherUseCase(repository)
     }
 }
