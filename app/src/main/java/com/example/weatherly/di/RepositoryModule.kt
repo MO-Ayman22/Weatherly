@@ -3,7 +3,9 @@ package com.example.weatherly.di
 import com.example.weatherly.core.LocationTracker
 import com.example.weatherly.data.repository.LocationRepositoryImpl
 import com.example.weatherly.data.repository.WeatherRepositoryImpl
+import com.example.weatherly.data.source.local.LocalDataSource
 import com.example.weatherly.data.source.preferences.PreferencesDataSource
+import com.example.weatherly.data.source.remote.RemoteDataSource
 import com.example.weatherly.domain.repository.LocationRepository
 import com.example.weatherly.domain.repository.WeatherRepository
 import dagger.Module
@@ -19,9 +21,11 @@ object RepositoryModule {
     @Provides
     @Singleton
     fun provideWeatherRepository(
-        preferencesDataSource: PreferencesDataSource
+        preferencesDataSource: PreferencesDataSource,
+        localDataSource: LocalDataSource,
+        remoteDataSource: RemoteDataSource
     ): WeatherRepository {
-        return WeatherRepositoryImpl(preferencesDataSource)
+        return WeatherRepositoryImpl(preferencesDataSource, localDataSource, remoteDataSource)
     }
 
     @Provides

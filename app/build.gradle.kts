@@ -20,6 +20,8 @@ android {
         versionName = "1.0"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
+        buildConfigField("String", "API_KEY", "\"${properties["API_KEY"]}\"")
+        buildConfigField("String", "BASE_URL", "\"${properties["BASE_URL"]}\"")
     }
 
     buildTypes {
@@ -37,6 +39,7 @@ android {
     }
     buildFeatures {
         compose = true
+        buildConfig = true
     }
 }
 
