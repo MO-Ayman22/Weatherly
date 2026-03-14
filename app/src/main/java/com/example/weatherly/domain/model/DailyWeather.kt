@@ -7,7 +7,8 @@ import androidx.room.PrimaryKey
 data class DailyWeather(
     @PrimaryKey
     val day: String,
-    val temp: Double,
+    val date: String,
+    val temp: Int,
     val description: String,
-    val icon: String
+    val icon: Int
 )

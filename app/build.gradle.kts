@@ -1,3 +1,5 @@
+import java.util.Properties
+
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.compose)
@@ -5,6 +7,17 @@ plugins {
     alias(libs.plugins.hilt)
     kotlin("plugin.serialization") version "2.3.10"
 }
+val localProperties = Properties()
+val localPropertiesFile = rootProject.file("local.properties")
+if (localPropertiesFile.exists()) {
+    localProperties.load(localPropertiesFile.inputStream())
+}
+
+val apiKey: String = localProperties.getProperty("API_KEY")
+    ?: (project.findProperty("API_KEY") as? String) ?: ""
+
+val baseUrl: String = localProperties.getProperty("BASE_URL")
+    ?: (project.findProperty("BASE_URL") as? String) ?: ""
 
 android {
     namespace = "com.example.weatherly"
@@ -20,8 +33,8 @@ android {
         versionName = "1.0"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
-        buildConfigField("String", "API_KEY", "\"${properties["API_KEY"]}\"")
-        buildConfigField("String", "BASE_URL", "\"${properties["BASE_URL"]}\"")
+        buildConfigField("String", "API_KEY", "\"$apiKey\"")
+        buildConfigField("String", "BASE_URL", "\"$baseUrl\"")
     }
 
     buildTypes {

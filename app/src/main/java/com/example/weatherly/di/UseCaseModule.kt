@@ -1,7 +1,9 @@
 package com.example.weatherly.di
 
+import com.example.weatherly.core.NetworkChecker
 import com.example.weatherly.domain.repository.LocationRepository
 import com.example.weatherly.domain.repository.WeatherRepository
+import com.example.weatherly.domain.usecase.CheckInternetConnectionUseCase
 import com.example.weatherly.domain.usecase.GetCurrentLocationUseCase
 import com.example.weatherly.domain.usecase.GetCurrentWeatherUseCase
 import com.example.weatherly.domain.usecase.GetDailyWeatherUseCase
@@ -110,4 +112,13 @@ object UseCaseModule {
     ): GetCurrentWeatherUseCase {
         return GetCurrentWeatherUseCase(repository)
     }
+
+    @Provides
+    @Singleton
+    fun provideCheckInternetConnectionUseCase(
+        networkChecker: NetworkChecker
+    ): CheckInternetConnectionUseCase {
+        return CheckInternetConnectionUseCase(networkChecker)
+    }
+
 }

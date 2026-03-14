@@ -5,6 +5,7 @@ import androidx.compose.ui.Modifier
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
+import com.example.weatherly.presentation.feature.home.ui.HomeScreen
 
 @Composable
 fun AppNavHost(navController: NavHostController, startDestination: Route, modifier: Modifier = Modifier) {
@@ -16,7 +17,7 @@ fun AppNavHost(navController: NavHostController, startDestination: Route, modifi
     ) {
 
         composable<Route.Home> {
-            // Home Screen
+            HomeScreen()
         }
 
         composable<Route.Favorites> {

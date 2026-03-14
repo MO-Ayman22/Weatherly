@@ -7,7 +7,7 @@ import androidx.room.PrimaryKey
 data class HourlyWeather(
     @PrimaryKey
     val time: String,
-    val temp: Double,
+    val temp: Int,
     val condition: String,
-    val icon: String
+    val icon: Int
 )

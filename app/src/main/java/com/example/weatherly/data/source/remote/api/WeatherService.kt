@@ -11,6 +11,7 @@ interface WeatherService {
         @Query("q") city: String? = null,
         @Query("lat") lat: Double? = null,
         @Query("lon") lon: Double? = null,
-        @Query("cnt") count: Int = 24,
+        @Query("cnt") count: Int = 40,
+        @Query("units") units: String = "metric"
     ): ForecastResponseDto
 }

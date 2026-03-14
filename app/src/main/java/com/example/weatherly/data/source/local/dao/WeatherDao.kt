@@ -29,6 +29,6 @@ interface WeatherDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertDailyWeather(list: List<DailyWeather>)
 
-    @Query("SELECT * FROM daily_weather ORDER BY day")
+    @Query("SELECT * FROM daily_weather ORDER BY date")
     suspend fun getDailyWeather(): List<DailyWeather>
 }
