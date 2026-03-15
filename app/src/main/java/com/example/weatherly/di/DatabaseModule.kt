@@ -2,6 +2,7 @@ package com.example.weatherly.di
 
 import android.content.Context
 import androidx.room.Room
+import com.example.weatherly.data.source.local.dao.AlertDao
 import com.example.weatherly.data.source.local.dao.WeatherDao
 import com.example.weatherly.data.source.local.db.AppDatabase
 import com.example.weatherly.utils.AppConstants
@@ -32,5 +33,11 @@ object DatabaseModule {
     @Singleton
     fun provideWeatherDao(db: AppDatabase): WeatherDao {
         return db.weatherDao()
+    }
+
+    @Provides
+    @Singleton
+    fun provideAlertDao(db: AppDatabase): AlertDao {
+        return db.alertDao()
     }
 }

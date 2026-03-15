@@ -1,15 +1,18 @@
 package com.example.weatherly.di
 
 import com.example.weatherly.core.NetworkChecker
+import com.example.weatherly.domain.repository.AlertRepository
 import com.example.weatherly.domain.repository.LocationRepository
 import com.example.weatherly.domain.repository.WeatherRepository
 import com.example.weatherly.domain.usecase.CheckInternetConnectionUseCase
+import com.example.weatherly.domain.usecase.GetAlertsUseCase
 import com.example.weatherly.domain.usecase.GetCurrentLocationUseCase
 import com.example.weatherly.domain.usecase.GetCurrentWeatherUseCase
 import com.example.weatherly.domain.usecase.GetDailyWeatherUseCase
 import com.example.weatherly.domain.usecase.GetHourlyWeatherUseCase
 import com.example.weatherly.domain.usecase.GetSavedLocationUseCase
 import com.example.weatherly.domain.usecase.HasLocationPermissionUseCase
+import com.example.weatherly.domain.usecase.InsertAlertUseCase
 import com.example.weatherly.domain.usecase.IsFirstTimeUseCase
 import com.example.weatherly.domain.usecase.IsGpsEnabledUseCase
 import com.example.weatherly.domain.usecase.RefreshWeatherUseCase
@@ -121,4 +124,19 @@ object UseCaseModule {
         return CheckInternetConnectionUseCase(networkChecker)
     }
 
+    @Provides
+    @Singleton
+    fun provideGetAlertsUseCase(
+        repository: AlertRepository
+    ): GetAlertsUseCase {
+        return GetAlertsUseCase(repository)
+    }
+
+    @Provides
+    @Singleton
+    fun provideInsertAlertUseCase(
+        repository: AlertRepository
+    ): InsertAlertUseCase {
+        return InsertAlertUseCase(repository)
+    }
 }

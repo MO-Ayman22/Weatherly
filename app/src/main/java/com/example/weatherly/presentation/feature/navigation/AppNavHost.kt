@@ -5,6 +5,7 @@ import androidx.compose.ui.Modifier
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
+import com.example.weatherly.presentation.feature.alerts.ui.AlertsScreen
 import com.example.weatherly.presentation.feature.home.ui.HomeScreen
 
 @Composable
@@ -29,7 +30,7 @@ fun AppNavHost(navController: NavHostController, startDestination: Route, modifi
         }
 
         composable<Route.Alerts> {
-            // Alerts Screen
+            AlertsScreen()
         }
     }
 }

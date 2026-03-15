@@ -3,6 +3,7 @@ package com.example.weatherly.di
 import android.content.SharedPreferences
 import com.example.weatherly.data.source.local.LocalDataSource
 import com.example.weatherly.data.source.local.LocalDataSourceImpl
+import com.example.weatherly.data.source.local.dao.AlertDao
 import com.example.weatherly.data.source.local.dao.WeatherDao
 import com.example.weatherly.data.source.preferences.PreferencesDataSource
 import com.example.weatherly.data.source.preferences.PreferencesDataSourceImpl
@@ -38,9 +39,10 @@ object DataSourceModule {
     @Provides
     @Singleton
     fun provideLocalDataSource(
-        weatherDao: WeatherDao
+        weatherDao: WeatherDao,
+        alertDao: AlertDao
     ): LocalDataSource {
-        return LocalDataSourceImpl(weatherDao)
+        return LocalDataSourceImpl(weatherDao, alertDao)
     }
 
 }

@@ -83,7 +83,7 @@ fun WeatherContent(
 
             item {
                 Text(
-                    text = "Seven Day Forecast",
+                    text = "Five Day Forecast",
                     color = Color.White,
                     style = MaterialTheme.typography.titleMedium
                 )
