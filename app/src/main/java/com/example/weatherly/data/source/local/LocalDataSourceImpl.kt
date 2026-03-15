@@ -49,4 +49,10 @@ class LocalDataSourceImpl @Inject constructor(
     override suspend fun updateLastTriggered(type: String, lastTriggered: Long) {
         alertDao.updateLastTriggered(type, lastTriggered)
     }
+
+    override suspend fun deleteAll() {
+        dao.deleteAllCurrent()
+        dao.deleteAllHourly()
+        dao.deleteAllDaily()
+    }
 }

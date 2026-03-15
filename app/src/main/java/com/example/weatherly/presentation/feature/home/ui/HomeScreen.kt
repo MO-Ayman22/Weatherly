@@ -12,7 +12,9 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
+import com.example.weatherly.R
 import com.example.weatherly.presentation.feature.home.viewmodels.HomeUiState
 import com.example.weatherly.presentation.feature.home.viewmodels.HomeViewModel
 
@@ -71,7 +73,7 @@ fun HomeScreen(
 
                 else -> {
                     NoConnectionView(
-                        message = "No internet connection",
+                        message = stringResource(R.string.no_internet_connection),
                         modifier = Modifier.align(Alignment.Center)
                     )
                 }

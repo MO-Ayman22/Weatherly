@@ -26,7 +26,7 @@ object NotificationHelper {
         actions: List<Action> = emptyList(),
         notificationId: Int
     ) {
-        val channelId = "weather_alert_channel"
+        val channelId = AppConstants.CHANNEL_ID_KEY
         val notificationBuilder = NotificationCompat.Builder(context, channelId)
             .setSmallIcon(R.drawable.icon_11d)
             .setContentTitle(title)

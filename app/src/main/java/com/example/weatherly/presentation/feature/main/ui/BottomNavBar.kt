@@ -12,7 +12,9 @@ import androidx.compose.material3.NavigationBarItemDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import com.example.weatherly.R
 import com.example.weatherly.presentation.feature.navigation.Route
 
 @Composable
@@ -25,10 +27,10 @@ fun BottomNavBar(
         tonalElevation = 0.dp
     ) {
         val items = listOf(
-            Route.Home to (Icons.Filled.Home to "Home"),
-            Route.Favorites to (Icons.Filled.Favorite to "Favorites"),
-            Route.Alerts to (Icons.Filled.Notifications to "Alerts"),
-            Route.Settings to (Icons.Filled.Settings to "Settings")
+            Route.Home to (Icons.Filled.Home to stringResource(R.string.home)),
+            Route.Favorites to (Icons.Filled.Favorite to stringResource(R.string.favorites)),
+            Route.Alerts to (Icons.Filled.Notifications to stringResource(R.string.alerts)),
+            Route.Settings to (Icons.Filled.Settings to stringResource(R.string.settings))
         )
 
         items.forEach { (route, data) ->

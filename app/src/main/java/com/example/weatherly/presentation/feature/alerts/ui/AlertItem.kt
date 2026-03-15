@@ -37,9 +37,11 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.example.weatherly.R
 import com.example.weatherly.domain.model.AlertType
 import com.example.weatherly.domain.model.NotificationType
 import com.example.weatherly.domain.model.WeatherAlert
@@ -56,12 +58,12 @@ fun AlertItem(
 
     var isEnabled by remember { mutableStateOf(alert.isEnabled) }
     var range by remember { mutableStateOf(alert.start..alert.end) }
-    var notifyBefore by remember { mutableStateOf("${alert.notifyBeforeMinutes} minutes") }
+    var notifyBefore by remember { mutableStateOf("${alert.notifyBeforeMinutes}") }
     var notificationType by remember { mutableStateOf(alert.notificationType) }
     val typeMeta = when (alert.alarmType) {
-        AlertType.TEMP.name -> "🌡" to "Temperature Alert"
-        AlertType.HUMIDITY.name -> "💧" to "Humidity Alert"
-        else -> "📈" to "Pressure Alert"
+        AlertType.TEMP.name -> "🌡" to stringResource(R.string.temperature_alert)
+        AlertType.HUMIDITY.name -> "💧" to stringResource(R.string.humidity_alert)
+        else -> "📈" to stringResource(R.string.pressure_alert)
     }
 
     val icon = typeMeta.first
@@ -91,7 +93,9 @@ fun AlertItem(
                             color = Color.White
                         )
                         Text(
-                            if (isEnabled) "Tap to adjust settings" else "Disabled",
+                            if (isEnabled) stringResource(R.string.tap_to_adjust_settings) else stringResource(
+                                R.string.disabled
+                            ),
                             fontSize = 12.sp,
                             color = Color.White.copy(alpha = 0.7f)
                         )
@@ -124,7 +128,11 @@ fun AlertItem(
                 Column(modifier = Modifier.padding(top = 12.dp)) {
 
                     Text(
-                        "Threshold Range: ${range.start.toInt()} - ${range.endInclusive.toInt()}°C",
+                        stringResource(
+                            R.string.threshold_range,
+                            range.start.toInt(),
+                            range.endInclusive.toInt()
+                        ),
                         fontSize = 13.sp,
                         color = Color.White.copy(alpha = 0.8f)
                     )
@@ -151,7 +159,7 @@ fun AlertItem(
 
 
                     Text(
-                        "Notify Before",
+                        stringResource(R.string.notify_before),
                         fontSize = 14.sp,
                         fontWeight = FontWeight.Medium,
                         color = Color.White
@@ -161,7 +169,7 @@ fun AlertItem(
                     var expanded by remember { mutableStateOf(false) }
                     Box {
                         OutlinedTextField(
-                            value = notifyBefore,
+                            value = notifyBefore + " " + stringResource(R.string.minutes),
                             onValueChange = {
                                 alert.notifyBeforeMinutes = it.split(" ")[0].toInt()
                             },
@@ -190,12 +198,13 @@ fun AlertItem(
                             onDismissRequest = { expanded = false }
                         ) {
                             listOf(
-                                "5 minutes",
-                                "10 minutes",
-                                "15 minutes",
-                                "20 minutes",
-                                "25 minutes",
-                                "30 minutes"
+                                "5 " + stringResource(R.string.minutes),
+                                "10 " + stringResource(R.string.minutes),
+                                "15 " + stringResource(R.string.minutes),
+                                "20" + stringResource(R.string.minutes),
+                                "25" + stringResource(R.string.minutes),
+                                "30" + stringResource(R.string.minutes),
+
                             )
                                 .forEach { option ->
                                     DropdownMenuItem(
@@ -214,7 +223,7 @@ fun AlertItem(
 
                     /** Notification Type **/
                     Text(
-                        "Notification Type",
+                        stringResource(R.string.notification_type),
                         fontSize = 14.sp,
                         fontWeight = FontWeight.Medium,
                         color = Color.White
@@ -232,7 +241,11 @@ fun AlertItem(
                                 unselectedColor = Color.White.copy(alpha = 0.5f)
                             )
                         )
-                        Text("Notification", Modifier.padding(start = 4.dp), color = Color.White)
+                        Text(
+                            stringResource(R.string.notification),
+                            Modifier.padding(start = 4.dp),
+                            color = Color.White
+                        )
                     }
 
                     Row(verticalAlignment = Alignment.CenterVertically) {
@@ -247,7 +260,11 @@ fun AlertItem(
                                 unselectedColor = Color.White.copy(alpha = 0.5f)
                             )
                         )
-                        Text("Alarm", Modifier.padding(start = 4.dp), color = Color.White)
+                        Text(
+                            stringResource(R.string.alarm),
+                            Modifier.padding(start = 4.dp),
+                            color = Color.White
+                        )
                     }
 
                     Spacer(Modifier.height(16.dp))
@@ -261,7 +278,7 @@ fun AlertItem(
                             contentColor = Color.White
                         )
                     ) {
-                        Text("Apply", color = Color.White)
+                        Text(stringResource(R.string.apply), color = Color.White)
                     }
                 }
             }

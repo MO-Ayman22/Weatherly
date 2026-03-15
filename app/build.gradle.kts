@@ -70,6 +70,7 @@ dependencies {
     implementation(libs.play.services.location)
     implementation(libs.androidx.hilt.common)
     implementation(libs.androidx.work.runtime.ktx)
+    implementation(libs.androidx.appcompat)
     testImplementation(libs.junit)
     testImplementation(libs.mockk)
     testImplementation(libs.kotlinx.coroutines.test)

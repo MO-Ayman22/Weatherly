@@ -21,8 +21,10 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import com.example.weatherly.R
 import com.example.weatherly.presentation.feature.onboarding.viewmodel.LocationState
 
 @Composable
@@ -68,7 +70,7 @@ fun OnboardingItem(
             Spacer(modifier = Modifier.height(32.dp))
 
             Text(
-                text = page.title,
+                text = stringResource(page.title),
                 style = MaterialTheme.typography.headlineMedium,
                 color = Color.White
             )
@@ -76,7 +78,7 @@ fun OnboardingItem(
             Spacer(modifier = Modifier.height(16.dp))
 
             Text(
-                text = page.description,
+                text = stringResource(page.description),
                 style = MaterialTheme.typography.bodyLarge,
                 color = Color.White.copy(alpha = 0.85f),
                 textAlign = TextAlign.Center
@@ -107,7 +109,7 @@ fun OnboardingItem(
                                 .fillMaxWidth()
                                 .height(48.dp)
                         ) {
-                            Text("Access Location")
+                            Text(stringResource(R.string.access_location))
                         }
 
                     }
@@ -127,7 +129,7 @@ fun OnboardingItem(
                                     .fillMaxWidth()
                                     .height(48.dp)
                             ) {
-                                Text("Open GPS Settings")
+                                Text(stringResource(R.string.open_gps_settings))
                             }
                         }
 
@@ -166,7 +168,9 @@ fun OnboardingItem(
                         .height(48.dp)
                 ) {
                     Text(
-                        text = if (isLastPage) "Get Started >" else "Next >"
+                        text = if (isLastPage) stringResource(R.string.get_started) else stringResource(
+                            R.string.next
+                        )
                     )
                 }
 

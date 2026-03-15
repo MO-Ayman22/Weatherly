@@ -31,4 +31,14 @@ interface WeatherDao {
 
     @Query("SELECT * FROM daily_weather ORDER BY date")
     suspend fun getDailyWeather(): List<DailyWeather>
+
+    @Query("DELETE FROM current_weather")
+    suspend fun deleteAllCurrent()
+
+    @Query("DELETE FROM hourly_weather")
+    suspend fun deleteAllHourly()
+
+    @Query("DELETE FROM daily_weather")
+    suspend fun deleteAllDaily()
+
 }

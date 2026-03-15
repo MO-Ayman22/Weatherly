@@ -2,16 +2,19 @@ package com.example.weatherly.data.mapper
 
 import com.example.weatherly.data.source.remote.dto.ForecastResponseDto
 import com.example.weatherly.domain.model.HourlyWeather
+import com.example.weatherly.utils.AppConstants
 import java.text.SimpleDateFormat
 import java.util.Locale
 import kotlin.math.roundToInt
 
-fun ForecastResponseDto.toHourlyWeather(): List<HourlyWeather> {
+fun ForecastResponseDto.toHourlyWeather(tempUnit: String): List<HourlyWeather> {
 
     val sdfInput = SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault())
     val sdfOutput = SimpleDateFormat("HH:mm", Locale.getDefault())
 
     val result = mutableListOf<HourlyWeather>()
+
+
 
     list.take(8).forEach { item ->
 
@@ -31,11 +34,15 @@ fun ForecastResponseDto.toHourlyWeather(): List<HourlyWeather> {
             } else {
                 item.dt_txt
             }
-
+            val temp = if (tempUnit == AppConstants.FAHRENHEIT) {
+                celsiusToFahrenheit(item.main.temp).roundToInt()
+            } else {
+                item.main.temp.roundToInt()
+            }
             result.add(
                 HourlyWeather(
                     time = time,
-                    temp = item.main.temp.roundToInt(),
+                    temp = temp,
                     condition = item.weather.firstOrNull()?.main ?: "",
                     icon = iconMapper(item.weather.firstOrNull()?.icon)
                 )

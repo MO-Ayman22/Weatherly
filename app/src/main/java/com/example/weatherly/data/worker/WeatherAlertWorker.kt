@@ -15,6 +15,7 @@ import com.example.weatherly.domain.model.WeatherAlert
 import com.example.weatherly.domain.repository.AlertRepository
 import com.example.weatherly.domain.repository.WeatherRepository
 import com.example.weatherly.utils.AlarmHelper
+import com.example.weatherly.utils.AppConstants
 import com.example.weatherly.utils.NotificationHelper
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedInject
@@ -84,7 +85,7 @@ class WeatherAlertWorker @AssistedInject constructor(
             NotificationType.ALARM.name -> {
                 val dismissIntent =
                     Intent(applicationContext, AlarmActionReceiver::class.java).apply {
-                        putExtra("ALERT_ID", notificationId)
+                        putExtra(AppConstants.ALERT_ID_KEY, notificationId)
                     }
 
                 val dismissPendingIntent = PendingIntent.getBroadcast(

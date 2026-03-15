@@ -11,7 +11,9 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import com.example.weatherly.R
 import com.example.weatherly.domain.model.HourlyWeather
 
 @Composable
@@ -23,7 +25,7 @@ fun HourlyForecastSection(
     Column {
 
         Text(
-            text = "Hourly Forecast",
+            text = stringResource(R.string.hourly_forecast),
             color = Color.White,
             style = MaterialTheme.typography.titleMedium
         )

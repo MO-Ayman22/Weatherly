@@ -2,11 +2,12 @@ package com.example.weatherly.data.mapper
 
 import com.example.weatherly.data.source.remote.dto.ForecastResponseDto
 import com.example.weatherly.domain.model.DailyWeather
+import com.example.weatherly.utils.AppConstants
 import java.text.SimpleDateFormat
 import java.util.Locale
 import kotlin.math.roundToInt
 
-fun ForecastResponseDto.toDailyWeather(): List<DailyWeather> {
+fun ForecastResponseDto.toDailyWeather(tempUnit: String): List<DailyWeather> {
     return list
         .groupBy { it.dt_txt.substring(0, 10) }
         .map { (date, items) ->
@@ -23,10 +24,14 @@ fun ForecastResponseDto.toDailyWeather(): List<DailyWeather> {
             } catch (_: Exception) {
                 date
             }
-
+            val temp = if (tempUnit == AppConstants.FAHRENHEIT) {
+                celsiusToFahrenheit(avgTemp).roundToInt()
+            } else {
+                avgTemp.roundToInt()
+            }
             DailyWeather(
                 day = day,
-                temp = avgTemp.roundToInt(),
+                temp = temp,
                 description = description,
                 date = date,
                 icon = iconMapper(icon)

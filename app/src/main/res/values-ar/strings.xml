@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Weatherly</string>
+    <string name="home">الرئيسية</string>
+    <string name="favorites">المفضلة</string>
+    <string name="alerts">التنبيهات</string>
+    <string name="settings">الإعدادات</string>
+    <string name="no_internet_connection">لا يوجد اتصال بالإنترنت</string>
+    <string name="five_day_forecast">توقعات 5 أيام</string>
+    <string name="hourly_forecast">توقعات كل ساعة</string>
+    <string name="hpa">%1$d هكتوباسكال</string>
+    <string name="wind_speed_ms_value">%1$s م/ث</string>
+    <string name="wind_speed_ms_unit">م/ث</string>
+    <string name="location_permission">إذن الموقع</string>
+    <string name="allow_us_to_access_your_location_to_provide_accurate_weather_forecasts_for_your_area">يرجى السماح لنا بالوصول إلى موقعك لتوفير توقعات طقس دقيقة لمنطقتك</string>
+    <string name="save_favorites">حفظ المفضلة</string>
+    <string name="add_your_favorite_locations_to_quickly_check_weather_conditions_anywhere_in_the_world">أضف مواقعك المفضلة للتحقق بسرعة من أحوال الطقس في أي مكان في العالم</string>
+    <string name="weather_alerts">تنبيهات الطقس</string>
+    <string name="get_notified_about_severe_weather_conditions_and_stay_prepared_for_any_changes">احصل على إشعارات بشأن أحوال الطقس القاسية وكن مستعداً لأي تغييرات</string>
+    <string name="get_started"><![CDATA[ابدأ الآن >]]></string>
+    <string name="next"><![CDATA[التالي >]]></string>
+    <string name="open_gps_settings">فتح إعدادات GPS</string>
+    <string name="access_location">الوصول للموقع</string>
+    <string name="apply">تطبيق</string>
+    <string name="alarm">منبه</string>
+    <string name="notification">إشعار</string>
+    <string name="notification_type">نوع التنبيه</string>
+    <string name="minutes">دقائق</string>
+    <string name="notify_before">تنبيه قبل</string>
+    <string name="threshold_range">نطاق الحد: %1$d - %2$d</string>
+    <string name="tap_to_adjust_settings">اضغط لضبط الإعدادات</string>
+    <string name="disabled">معطل</string>
+    <string name="temperature_alert">تنبيه الحرارة</string>
+    <string name="humidity_alert">تنبيه الرطوبة</string>
+    <string name="pressure_alert">تنبيه الضغط</string>
+    <string name="app_language">لغة التطبيق</string>
+    <string name="english">الإنجليزية</string>
+    <string name="arabic">العربية</string>
+    <string name="wind_speed">سرعة الرياح</string>
+    <string name="wind_speed_kmh_value">كم/س</string>
+    <string name="temperature">درجة الحرارة</string>
+    <string name="measurement_units">وحدات القياس</string>
+    <string name="f">°ف</string>
+    <string name="c">°م</string>
+</resources>

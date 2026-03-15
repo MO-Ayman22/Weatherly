@@ -16,4 +16,5 @@ interface LocalDataSource {
     fun getAlerts(): Flow<List<WeatherAlert>>
     suspend fun insertAlert(alert: WeatherAlert)
     suspend fun updateLastTriggered(type: String, lastTriggered: Long)
+    suspend fun deleteAll()
 }

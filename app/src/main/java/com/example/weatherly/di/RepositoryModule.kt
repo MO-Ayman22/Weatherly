@@ -1,50 +1,46 @@
 package com.example.weatherly.di
 
-import com.example.weatherly.core.LocationTracker
 import com.example.weatherly.data.repository.AlertRepositoryImpl
 import com.example.weatherly.data.repository.LocationRepositoryImpl
+import com.example.weatherly.data.repository.SettingsRepositoryImpl
 import com.example.weatherly.data.repository.WeatherRepositoryImpl
-import com.example.weatherly.data.source.local.LocalDataSource
-import com.example.weatherly.data.source.preferences.PreferencesDataSource
-import com.example.weatherly.data.source.remote.RemoteDataSource
 import com.example.weatherly.domain.repository.AlertRepository
 import com.example.weatherly.domain.repository.LocationRepository
+import com.example.weatherly.domain.repository.SettingsRepository
 import com.example.weatherly.domain.repository.WeatherRepository
+import dagger.Binds
 import dagger.Module
-import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
 import jakarta.inject.Singleton
 
 @Module
 @InstallIn(SingletonComponent::class)
-object RepositoryModule {
+interface RepositoryModule {
 
-    @Provides
+    @Binds
     @Singleton
     fun provideWeatherRepository(
-        preferencesDataSource: PreferencesDataSource,
-        localDataSource: LocalDataSource,
-        remoteDataSource: RemoteDataSource
-    ): WeatherRepository {
-        return WeatherRepositoryImpl(preferencesDataSource, localDataSource, remoteDataSource)
-    }
+        weatherRepositoryImpl: WeatherRepositoryImpl
+    ): WeatherRepository
 
-    @Provides
+    @Binds
     @Singleton
     fun provideLocationRepository(
-        tracker: LocationTracker,
-        preferencesDataSource: PreferencesDataSource
-    ): LocationRepository {
-        return LocationRepositoryImpl(tracker, preferencesDataSource)
-    }
+        locationRepositoryImpl: LocationRepositoryImpl
+    ): LocationRepository
 
-    @Provides
+    @Binds
     @Singleton
     fun provideAlertRepository(
-        localDataSource: LocalDataSource
-    ): AlertRepository {
-        return AlertRepositoryImpl(localDataSource)
-    }
+        alertRepositoryImpl: AlertRepositoryImpl
+    ): AlertRepository
+
+    @Binds
+    @Singleton
+    fun provideSettingsRepository(
+        settingsRepositoryImpl: SettingsRepositoryImpl
+    ): SettingsRepository
+
 
 }

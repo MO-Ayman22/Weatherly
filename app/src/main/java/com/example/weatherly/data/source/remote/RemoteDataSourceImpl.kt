@@ -11,8 +11,9 @@ class RemoteDataSourceImpl @Inject constructor(
     override suspend fun getForecast(
         city: String?,
         lat: Double?,
-        lon: Double?
+        lon: Double?,
+        lang: String
     ): ForecastResponseDto {
-        return api.getForecast(city, lat, lon)
+        return api.getForecast(city, lat, lon, lang)
     }
 }

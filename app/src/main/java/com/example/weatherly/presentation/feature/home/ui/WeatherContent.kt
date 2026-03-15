@@ -14,7 +14,9 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import com.example.weatherly.R
 import com.example.weatherly.domain.model.CurrentWeather
 import com.example.weatherly.domain.model.DailyWeather
 import com.example.weatherly.domain.model.HourlyWeather
@@ -25,6 +27,7 @@ fun WeatherContent(
     current: CurrentWeather,
     hourly: List<HourlyWeather>,
     daily: List<DailyWeather>,
+    windResId: Int = R.string.wind_speed_ms_value,
     date: String,
 ) {
 
@@ -69,8 +72,8 @@ fun WeatherContent(
             item {
                 DetailedConditionsSection(
                     humidityValue = "${current.humidity}%",
-                    windValue = "${current.windSpeed} m/s",
-                    pressureValue = "${current.pressure} hPa",
+                    windValue = stringResource(windResId, current.windSpeed),
+                    pressureValue = stringResource(R.string.hpa, current.pressure),
                     cloudsValue = "${current.clouds}%"
                 )
             }
@@ -83,7 +86,7 @@ fun WeatherContent(
 
             item {
                 Text(
-                    text = "Five Day Forecast",
+                    text = stringResource(R.string.five_day_forecast),
                     color = Color.White,
                     style = MaterialTheme.typography.titleMedium
                 )

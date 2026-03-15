@@ -30,4 +30,30 @@ class PreferencesDataSourceImpl @Inject constructor(
             putFloat(AppConstants.LOCATION_LONGITUDE_KEY, location.longitude.toFloat())
         }
     }
+
+    override fun getLanguage(): String {
+        return prefs.getString(AppConstants.LANGUAGE_KEY, AppConstants.ENGLISH).toString()
+    }
+
+    override suspend fun saveLanguage(langCode: String) {
+        prefs.edit { putString(AppConstants.LANGUAGE_KEY, langCode) }
+    }
+
+    override fun getTempUnit(): String {
+        return prefs.getString(AppConstants.TEMP_UNIT_KEY, AppConstants.METRIC).toString()
+    }
+
+    override suspend fun saveTempUnit(unit: String) {
+        prefs.edit { putString(AppConstants.TEMP_UNIT_KEY, unit) }
+    }
+
+    override fun getWindSpeedUnit(): String {
+        return prefs.getString(AppConstants.WIND_SPEED_KEY, AppConstants.KM_H).toString()
+    }
+
+    override suspend fun saveWindSpeedUnit(unit: String) {
+        prefs.edit { putString(AppConstants.WIND_SPEED_KEY, unit) }
+    }
+
+
 }

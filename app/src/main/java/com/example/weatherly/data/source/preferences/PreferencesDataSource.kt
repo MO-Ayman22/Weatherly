@@ -10,4 +10,13 @@ interface PreferencesDataSource {
     fun getSavedLocation(): Pair<Float, Float>
 
     fun saveLocation(location: Location)
+
+    fun getLanguage(): String
+    suspend fun saveLanguage(langCode: String)
+
+    fun getTempUnit(): String
+    suspend fun saveTempUnit(unit: String)
+
+    fun getWindSpeedUnit(): String
+    suspend fun saveWindSpeedUnit(unit: String)
 }

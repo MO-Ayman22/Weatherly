@@ -6,6 +6,7 @@ import android.content.Context
 import android.content.Intent
 import com.example.weatherly.data.mapper.alertIdMapper
 import com.example.weatherly.utils.AlarmHelper
+import com.example.weatherly.utils.AppConstants
 import dagger.hilt.android.EntryPointAccessors
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -13,7 +14,7 @@ import kotlinx.coroutines.launch
 
 class AlarmActionReceiver : BroadcastReceiver() {
     override fun onReceive(context: Context, intent: Intent) {
-        val alertId = intent.getIntExtra("ALERT_ID", -1)
+        val alertId = intent.getIntExtra(AppConstants.ALERT_ID_KEY, -1)
 
         if (alertId != -1) {
             AlarmHelper.stopAlarm(context)
