@@ -1,4 +1,4 @@
-package com.example.weatherly.data.source.preferences
+package com.example.weatherly.data
 
 import android.content.Context
 import android.content.SharedPreferences
@@ -6,8 +6,10 @@ import android.location.Location
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule
 import androidx.test.core.app.ApplicationProvider
 import androidx.test.ext.junit.runners.AndroidJUnit4
-import org.hamcrest.CoreMatchers.`is`
-import org.hamcrest.MatcherAssert.assertThat
+import com.example.weatherly.data.source.preferences.PreferencesDataSource
+import com.example.weatherly.data.source.preferences.PreferencesDataSourceImpl
+import org.hamcrest.CoreMatchers
+import org.hamcrest.MatcherAssert
 import org.junit.After
 import org.junit.Before
 import org.junit.Rule
@@ -45,7 +47,7 @@ class PreferencesDataSourceTest {
 
         // Then isFirstTime returns false
         val result = dataSource.isFirstTime()
-        assertThat(result, `is`(false))
+        MatcherAssert.assertThat(result, CoreMatchers.`is`(false))
     }
 
     @Test
@@ -58,7 +60,7 @@ class PreferencesDataSourceTest {
 
         // Then isFirstTime returns true
         val result = dataSource.isFirstTime()
-        assertThat(result, `is`(true))
+        MatcherAssert.assertThat(result, CoreMatchers.`is`(true))
     }
 
     @Test
@@ -75,8 +77,8 @@ class PreferencesDataSourceTest {
         val (lat, lon) = dataSource.getSavedLocation()
 
         // Assert
-        assertThat(lat, `is`(30.5f))
-        assertThat(lon, `is`(31.2f))
+        MatcherAssert.assertThat(lat, CoreMatchers.`is`(30.5f))
+        MatcherAssert.assertThat(lon, CoreMatchers.`is`(31.2f))
     }
 
     @Test
@@ -86,7 +88,7 @@ class PreferencesDataSourceTest {
         val (lat, lon) = dataSource.getSavedLocation()
 
         // Assert
-        assertThat(lat, `is`(0f))
-        assertThat(lon, `is`(0f))
+        MatcherAssert.assertThat(lat, CoreMatchers.`is`(0f))
+        MatcherAssert.assertThat(lon, CoreMatchers.`is`(0f))
     }
 }
