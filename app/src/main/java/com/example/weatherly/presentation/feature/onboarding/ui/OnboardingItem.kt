@@ -48,7 +48,7 @@ fun OnboardingItem(
         Column(
             modifier = Modifier
                 .align(Alignment.Center)
-                .padding(horizontal = 32.dp),
+                .padding(horizontal = 32.dp, vertical = 16.dp),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
 
@@ -88,7 +88,7 @@ fun OnboardingItem(
         Box(
             modifier = Modifier
                 .align(Alignment.BottomCenter)
-                .padding(horizontal = 16.dp, vertical = 32.dp)
+                .padding(horizontal = 16.dp, vertical = 48.dp)
                 .fillMaxWidth()
         ) {
 

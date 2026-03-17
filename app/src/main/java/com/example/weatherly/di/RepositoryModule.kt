@@ -1,10 +1,12 @@
 package com.example.weatherly.di
 
 import com.example.weatherly.data.repository.AlertRepositoryImpl
+import com.example.weatherly.data.repository.FavoriteRepositoryImpl
 import com.example.weatherly.data.repository.LocationRepositoryImpl
 import com.example.weatherly.data.repository.SettingsRepositoryImpl
 import com.example.weatherly.data.repository.WeatherRepositoryImpl
 import com.example.weatherly.domain.repository.AlertRepository
+import com.example.weatherly.domain.repository.FavoriteRepository
 import com.example.weatherly.domain.repository.LocationRepository
 import com.example.weatherly.domain.repository.SettingsRepository
 import com.example.weatherly.domain.repository.WeatherRepository
@@ -42,5 +44,9 @@ interface RepositoryModule {
         settingsRepositoryImpl: SettingsRepositoryImpl
     ): SettingsRepository
 
-
+    @Binds
+    @Singleton
+    fun provideFavoriteRepository(
+        favoriteRepositoryImpl: FavoriteRepositoryImpl
+    ): FavoriteRepository
 }

@@ -13,11 +13,11 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowDropDown
 import androidx.compose.material3.Button
-import androidx.compose.material3.DropdownMenu
-import androidx.compose.material3.DropdownMenuItem
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.OutlinedTextField
@@ -36,6 +36,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
@@ -52,81 +53,80 @@ import com.example.weatherly.presentation.feature.home.ui.GlassCard
 fun AlertItem(
     modifier: Modifier = Modifier,
     alert: WeatherAlert,
+    isEditable: Boolean,
     onToggle: (WeatherAlert, Boolean) -> Unit,
     onApply: (WeatherAlert) -> Unit
 ) {
+    val activeColor = Color(0xFFFFE082)
+    val trackColor = Color.White.copy(alpha = 0.3f)
 
     var isEnabled by remember { mutableStateOf(alert.isEnabled) }
     var range by remember { mutableStateOf(alert.start..alert.end) }
     var notifyBefore by remember { mutableStateOf("${alert.notifyBeforeMinutes}") }
     var notificationType by remember { mutableStateOf(alert.notificationType) }
+
     val typeMeta = when (alert.alarmType) {
         AlertType.TEMP.name -> "🌡" to stringResource(R.string.temperature_alert)
         AlertType.HUMIDITY.name -> "💧" to stringResource(R.string.humidity_alert)
         else -> "📈" to stringResource(R.string.pressure_alert)
     }
 
-    val icon = typeMeta.first
-    val label = typeMeta.second
     GlassCard(
         modifier = modifier
             .fillMaxWidth()
-            .padding(16.dp)
+            .padding(horizontal = 16.dp, vertical = 8.dp)
+            .alpha(if (isEditable) 1f else 0.6f)
     ) {
-
-        Column {
-
-
+        Column(modifier = Modifier.padding(16.dp)) {
             Row(
                 modifier = Modifier.fillMaxWidth(),
                 verticalAlignment = Alignment.CenterVertically,
                 horizontalArrangement = Arrangement.SpaceBetween
             ) {
                 Row(verticalAlignment = Alignment.CenterVertically) {
-                    Text(icon, fontSize = 22.sp)
+                    Text(typeMeta.first, fontSize = 24.sp)
                     Spacer(Modifier.width(12.dp))
                     Column {
                         Text(
-                            label,
-                            fontWeight = FontWeight.SemiBold,
-                            fontSize = 16.sp,
+                            typeMeta.second,
+                            fontWeight = FontWeight.Bold,
+                            fontSize = 17.sp,
                             color = Color.White
                         )
                         Text(
-                            if (isEnabled) stringResource(R.string.tap_to_adjust_settings) else stringResource(
-                                R.string.disabled
-                            ),
+                            if (!isEditable) stringResource(R.string.permissions_required_msg)
+                            else if (isEnabled) stringResource(R.string.tap_to_adjust_settings)
+                            else stringResource(R.string.disabled),
                             fontSize = 12.sp,
-                            color = Color.White.copy(alpha = 0.7f)
+                            color = Color.White.copy(alpha = 0.6f)
                         )
                     }
                 }
 
                 Switch(
-                    checked = isEnabled,
+                    checked = isEnabled && isEditable,
                     onCheckedChange = {
                         isEnabled = it
-                        alert.isEnabled = isEnabled
-                        onToggle(alert, isEnabled)
+                        onToggle(alert, it)
                     },
+                    enabled = isEditable,
                     colors = SwitchDefaults.colors(
                         checkedThumbColor = Color.White,
-                        checkedTrackColor = Color(0xFF64B5F6),
-                        uncheckedThumbColor = Color.White,
-                        uncheckedTrackColor = Color.White.copy(alpha = 0.25f)
+                        checkedTrackColor = activeColor.copy(alpha = 0.8f),
+                        uncheckedThumbColor = Color.LightGray,
+                        uncheckedTrackColor = trackColor,
+                        disabledCheckedTrackColor = activeColor.copy(alpha = 0.2f),
+                        disabledUncheckedTrackColor = trackColor.copy(alpha = 0.1f)
                     )
                 )
             }
 
-            Spacer(Modifier.height(16.dp))
-
             AnimatedVisibility(
-                visible = isEnabled,
+                visible = isEnabled && isEditable,
                 enter = expandVertically(),
                 exit = shrinkVertically()
             ) {
-                Column(modifier = Modifier.padding(top = 12.dp)) {
-
+                Column(modifier = Modifier.padding(top = 16.dp)) {
                     Text(
                         stringResource(
                             R.string.threshold_range,
@@ -134,154 +134,112 @@ fun AlertItem(
                             range.endInclusive.toInt()
                         ),
                         fontSize = 13.sp,
-                        color = Color.White.copy(alpha = 0.8f)
+                        color = Color.White.copy(alpha = 0.9f)
                     )
-
-                    Spacer(Modifier.height(8.dp))
-
                     RangeSlider(
                         value = range,
-                        onValueChange = {
-                            range = it
-                            alert.start = it.start
-                            alert.end = it.endInclusive
-
-                        },
+                        onValueChange = { range = it },
                         valueRange = alert.min..alert.max,
                         colors = SliderDefaults.colors(
-                            thumbColor = Color(0xFF64B5F6),
-                            activeTrackColor = Color(0xFF64B5F6),
-                            inactiveTrackColor = Color.White.copy(alpha = 0.25f)
+                            thumbColor = Color.White,
+                            activeTrackColor = activeColor,
+                            inactiveTrackColor = trackColor
                         )
                     )
 
-                    Spacer(Modifier.height(16.dp))
-
-
-                    Text(
-                        stringResource(R.string.notify_before),
-                        fontSize = 14.sp,
-                        fontWeight = FontWeight.Medium,
-                        color = Color.White
-                    )
-                    Spacer(Modifier.height(8.dp))
+                    Spacer(Modifier.height(12.dp))
 
                     var expanded by remember { mutableStateOf(false) }
-                    Box {
+                    Text(
+                        stringResource(R.string.notify_before),
+                        color = Color.White,
+                        fontSize = 14.sp
+                    )
+                    Box(modifier = Modifier.padding(vertical = 8.dp)) {
                         OutlinedTextField(
-                            value = notifyBefore + " " + stringResource(R.string.minutes),
-                            onValueChange = {
-                                alert.notifyBeforeMinutes = it.split(" ")[0].toInt()
-                            },
+                            value = "$notifyBefore " + stringResource(R.string.minutes),
+                            onValueChange = {},
                             readOnly = true,
                             modifier = Modifier.fillMaxWidth(),
-                            colors = TextFieldDefaults.colors(
-                                focusedTextColor = Color.White,
-                                unfocusedTextColor = Color.White,
-                                focusedContainerColor = Color.White.copy(alpha = 0.5f),
-                                unfocusedContainerColor = Color.White.copy(alpha = 0.25f),
-                                unfocusedPlaceholderColor = Color.White.copy(alpha = 0.5f),
-                                focusedPlaceholderColor = Color.White.copy(alpha = 0.5f),
-                            ),
+                            shape = RoundedCornerShape(12.dp),
                             trailingIcon = {
                                 Icon(
                                     Icons.Default.ArrowDropDown,
-                                    contentDescription = null,
+                                    null,
                                     tint = Color.White,
                                     modifier = Modifier.clickable { expanded = true }
                                 )
                             },
-                        )
-
-                        DropdownMenu(
-                            expanded = expanded,
-                            onDismissRequest = { expanded = false }
-                        ) {
-                            listOf(
-                                "5 " + stringResource(R.string.minutes),
-                                "10 " + stringResource(R.string.minutes),
-                                "15 " + stringResource(R.string.minutes),
-                                "20" + stringResource(R.string.minutes),
-                                "25" + stringResource(R.string.minutes),
-                                "30" + stringResource(R.string.minutes),
-
+                            colors = TextFieldDefaults.colors(
+                                focusedContainerColor = Color.White.copy(alpha = 0.1f),
+                                unfocusedContainerColor = Color.White.copy(alpha = 0.05f),
+                                focusedTextColor = Color.White,
+                                unfocusedTextColor = Color.White,
+                                focusedIndicatorColor = activeColor,
+                                unfocusedIndicatorColor = Color.White.copy(alpha = 0.2f)
                             )
-                                .forEach { option ->
-                                    DropdownMenuItem(
-                                        text = { Text(option) },
-                                        onClick = {
-                                            notifyBefore = option
-                                            alert.notifyBeforeMinutes = option.split(" ")[0].toInt()
-                                            expanded = false
-                                        }
-                                    )
-                                }
-                        }
+                        )
                     }
 
-                    Spacer(Modifier.height(16.dp))
-
-                    /** Notification Type **/
-                    Text(
-                        stringResource(R.string.notification_type),
-                        fontSize = 14.sp,
-                        fontWeight = FontWeight.Medium,
-                        color = Color.White
-                    )
-                    Spacer(Modifier.height(8.dp))
-                    Row(verticalAlignment = Alignment.CenterVertically) {
-                        RadioButton(
+                    Row(horizontalArrangement = Arrangement.spacedBy(16.dp)) {
+                        NotificationOption(
                             selected = notificationType == NotificationType.NOTIFICATION.name,
-                            onClick = {
-                                notificationType = NotificationType.NOTIFICATION.name
-                                alert.notificationType = NotificationType.NOTIFICATION.name
-                            },
-                            colors = RadioButtonDefaults.colors(
-                                selectedColor = Color(0xFF64B5F6),
-                                unselectedColor = Color.White.copy(alpha = 0.5f)
-                            )
+                            label = stringResource(R.string.notification),
+                            activeColor = activeColor,
+                            onClick = { notificationType = NotificationType.NOTIFICATION.name }
                         )
-                        Text(
-                            stringResource(R.string.notification),
-                            Modifier.padding(start = 4.dp),
-                            color = Color.White
-                        )
-                    }
-
-                    Row(verticalAlignment = Alignment.CenterVertically) {
-                        RadioButton(
+                        NotificationOption(
                             selected = notificationType == NotificationType.ALARM.name,
-                            onClick = {
-                                notificationType = NotificationType.ALARM.name
-                                alert.notificationType = NotificationType.ALARM.name
-                            },
-                            colors = RadioButtonDefaults.colors(
-                                selectedColor = Color(0xFF64B5F6),
-                                unselectedColor = Color.White.copy(alpha = 0.5f)
-                            )
-                        )
-                        Text(
-                            stringResource(R.string.alarm),
-                            Modifier.padding(start = 4.dp),
-                            color = Color.White
+                            label = stringResource(R.string.alarm),
+                            activeColor = activeColor,
+                            onClick = { notificationType = NotificationType.ALARM.name }
                         )
                     }
 
-                    Spacer(Modifier.height(16.dp))
+                    Spacer(Modifier.height(20.dp))
 
                     Button(
-                        onClick = { onApply(alert) },
-                        modifier = Modifier.fillMaxWidth(),
-                        shape = androidx.compose.foundation.shape.RoundedCornerShape(12.dp),
-                        colors = androidx.compose.material3.ButtonDefaults.buttonColors(
-                            containerColor = Color(0xFF64B5F6),
-                            contentColor = Color.White
+                        onClick = {
+                            val notifyVal =
+                                notifyBefore.filter { it.isDigit() }.ifEmpty { "0" }.toInt()
+                            alert.apply {
+                                start = range.start
+                                end = range.endInclusive
+                                notifyBeforeMinutes = notifyVal
+                                this.notificationType = notificationType
+                            }
+                            onApply(alert)
+                        },
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .height(48.dp),
+                        shape = RoundedCornerShape(12.dp),
+                        colors = ButtonDefaults.buttonColors(
+                            containerColor = activeColor,
+                            contentColor = Color(0xFF5D4037)
                         )
                     ) {
-                        Text(stringResource(R.string.apply), color = Color.White)
+                        Text(stringResource(R.string.apply), fontWeight = FontWeight.Bold)
                     }
                 }
             }
         }
+    }
+}
+
+@Composable
+fun NotificationOption(selected: Boolean, label: String, activeColor: Color, onClick: () -> Unit) {
+    Row(
+        verticalAlignment = Alignment.CenterVertically,
+        modifier = Modifier.clickable { onClick() }) {
+        RadioButton(
+            selected = selected,
+            onClick = onClick,
+            colors = RadioButtonDefaults.colors(
+                selectedColor = activeColor,
+                unselectedColor = Color.White.copy(alpha = 0.5f)
+            )
+        )
+        Text(label, color = Color.White, fontSize = 14.sp)
     }
 }

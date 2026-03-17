@@ -14,16 +14,20 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import androidx.navigation.NavDestination
+import androidx.navigation.NavDestination.Companion.hasRoute
+import androidx.navigation.NavGraph.Companion.findStartDestination
+import androidx.navigation.NavHostController
 import com.example.weatherly.R
 import com.example.weatherly.presentation.feature.navigation.Route
 
 @Composable
 fun BottomNavBar(
-    selectedRoute: Route,
-    onItemClick: (Route) -> Unit
+    navController: NavHostController,
+    currentDestination: NavDestination?
 ) {
     NavigationBar(
-        containerColor = Color(0xFF77A7D3).copy(alpha = 0.5f),
+        containerColor = Color(0xFF2D3436),
         tonalElevation = 0.dp
     ) {
         val items = listOf(
@@ -34,17 +38,29 @@ fun BottomNavBar(
         )
 
         items.forEach { (route, data) ->
+            // هنا السر: بنشيك هل المسار الحالي واصل للـ Route ده فعلاً؟
+            val isSelected = currentDestination?.hasRoute(route::class) ?: false
+
             NavigationBarItem(
                 icon = { Icon(data.first, contentDescription = data.second) },
                 label = { Text(text = data.second) },
-                selected = selectedRoute == route,
-                onClick = { onItemClick(route) },
+                selected = isSelected,
+                onClick = {
+                    navController.navigate(route) {
+                        popUpTo(navController.graph.findStartDestination().id) {
+                            saveState = true
+                        }
+                        launchSingleTop = true
+                        restoreState = true
+                    }
+                },
                 colors = NavigationBarItemDefaults.colors(
                     selectedIconColor = Color(0xFF57A5FF),
                     unselectedIconColor = Color.White.copy(alpha = 0.7f),
                     selectedTextColor = Color(0xFF57A5FF),
                     unselectedTextColor = Color.White.copy(alpha = 0.7f),
                     indicatorColor = Color.Transparent
+
                 )
             )
         }

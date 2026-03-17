@@ -27,7 +27,8 @@ fun WeatherContent(
     current: CurrentWeather,
     hourly: List<HourlyWeather>,
     daily: List<DailyWeather>,
-    windResId: Int = R.string.wind_speed_ms_value,
+    windResId: Int,
+    tempResId: Int,
     date: String,
 ) {
 
@@ -62,7 +63,7 @@ fun WeatherContent(
 
             item {
                 CurrentWeatherSection(
-                    temperature = "${current.temperature}°",
+                    temperature = "${current.temperature}" + stringResource(tempResId),
                     condition = current.condition,
                     conditionDescription = current.description,
                     icon = current.icon
@@ -72,15 +73,16 @@ fun WeatherContent(
             item {
                 DetailedConditionsSection(
                     humidityValue = "${current.humidity}%",
-                    windValue = stringResource(windResId, current.windSpeed),
-                    pressureValue = stringResource(R.string.hpa, current.pressure),
+                    windValue = current.windSpeed.toString() + stringResource(windResId),
+                    pressureValue = current.pressure.toString() + stringResource(R.string.hpa),
                     cloudsValue = "${current.clouds}%"
                 )
             }
 
             item {
                 HourlyForecastSection(
-                    items = hourly
+                    items = hourly,
+                    tempResId = tempResId
                 )
             }
 
@@ -92,7 +94,7 @@ fun WeatherContent(
                 )
                 Spacer(modifier = Modifier.height(12.dp))
                 daily.forEach { day ->
-                    DailyItem(day)
+                    DailyItem(day, tempResId)
                     Spacer(modifier = Modifier.height(12.dp))
                 }
             }

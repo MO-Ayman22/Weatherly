@@ -9,6 +9,13 @@ object AppConstants {
 
     const val ALERT_ID_KEY = "alert_id"
     const val CHANNEL_ID_KEY = "weather_alert_channel"
+    const val WORKER_NAME = "weather_alert_worker"
+
+    const val LOCATION_METHOD_KEY = "location_method"
+
+    const val MAP_METHOD_KEY = "map_method"
+
+    const val GPS_METHOD_KEY = "gps_method"
 
     const val LANGUAGE_KEY = "language"
     const val TEMP_UNIT_KEY = "temp_unit"

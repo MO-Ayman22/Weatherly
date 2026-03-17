@@ -7,6 +7,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.example.weatherly.R
 
@@ -32,14 +33,14 @@ fun DetailedConditionsSection(
             ) {
                 ConditionItem(
                     icon = painterResource(R.drawable.ic_humidity),
-                    label = "Humidity",
+                    label = stringResource(R.string.humidity),
                     value = humidityValue,
                     modifier = Modifier.weight(1f)
                 )
 
                 ConditionItem(
                     icon = painterResource(R.drawable.ic_wind),
-                    label = "Wind",
+                    label = stringResource(R.string.wind),
                     value = windValue,
                     modifier = Modifier.weight(1f)
                 )
@@ -51,14 +52,14 @@ fun DetailedConditionsSection(
             ) {
                 ConditionItem(
                     icon = painterResource(R.drawable.ic_pressure),
-                    label = "Pressure",
+                    label = stringResource(R.string.pressure),
                     value = pressureValue,
                     modifier = Modifier.weight(1f)
                 )
 
                 ConditionItem(
                     icon = painterResource(R.drawable.ic_cloud),
-                    label = "Clouds",
+                    label = stringResource(R.string.clouds),
                     value = cloudsValue,
                     modifier = Modifier.weight(1f)
                 )

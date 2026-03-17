@@ -6,12 +6,12 @@ import retrofit2.http.Query
 
 interface WeatherService {
 
-    @GET("forecast")
+    @GET("data/2.5/forecast")
     suspend fun getForecast(
         @Query("q") city: String? = null,
         @Query("lat") lat: Double? = null,
         @Query("lon") lon: Double? = null,
-        @Query("lang") lang: String = "ar",
+        @Query("lang") lang: String? = null,
         @Query("cnt") count: Int = 40,
         @Query("units") units: String = "metric"
     ): ForecastResponseDto

@@ -14,12 +14,13 @@ import androidx.compose.ui.unit.dp
 @Composable
 fun GlassCard(
     modifier: Modifier = Modifier,
+    containerColor: Color = Color.White.copy(alpha = 0.15f),
     content: @Composable () -> Unit
 ) {
     Box(
         modifier = modifier
             .clip(RoundedCornerShape(16.dp))
-            .background(Color.White.copy(alpha = 0.15f))
+            .background(containerColor)
             .border(
                 1.dp,
                 Color.White.copy(alpha = 0.25f),

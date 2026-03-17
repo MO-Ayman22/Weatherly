@@ -2,31 +2,24 @@ package com.example.weatherly.data.mapper
 
 import com.example.weatherly.data.source.remote.dto.ForecastResponseDto
 import com.example.weatherly.domain.model.CurrentWeather
-import com.example.weatherly.utils.AppConstants
 import kotlin.math.roundToInt
 
-fun ForecastResponseDto.toCurrentWeather(tempUnit: String, windSpeedUnit: String): CurrentWeather {
+fun ForecastResponseDto.toCurrentWeather(lang: String): CurrentWeather {
     val current = list.first()
-    val temp = if (tempUnit == AppConstants.FAHRENHEIT) {
-        celsiusToFahrenheit(current.main.temp).roundToInt()
-    } else {
-        current.main.temp.roundToInt()
-    }
-    val windSpeed = if (windSpeedUnit == AppConstants.KM_H) {
-        msToKmh(current.wind.speed)
-    } else {
-        current.wind.speed
-    }
+
     return CurrentWeather(
         location = city.name,
-        temperature = temp,
+        temperature = current.main.temp.roundToInt(),
         feelsLike = current.main.feels_like.roundToInt(),
         condition = current.weather.firstOrNull()?.main ?: "",
         description = current.weather.firstOrNull()?.description ?: "",
         icon = iconMapper(current.weather.firstOrNull()?.icon),
         humidity = current.main.humidity,
-        windSpeed = windSpeed,
+        windSpeed = current.wind.speed.roundToInt(),
         pressure = current.main.pressure,
-        clouds = current.clouds.all
+        clouds = current.clouds.all,
+        language = lang,
+        lat = city.coord.lat,
+        lon = city.coord.lon,
     )
 }

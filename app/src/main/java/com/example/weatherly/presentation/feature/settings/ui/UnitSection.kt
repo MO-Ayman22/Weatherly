@@ -69,7 +69,7 @@ fun UnitSection(
                 label = stringResource(R.string.wind_speed),
                 options = listOf(
                     stringResource(R.string.wind_speed_ms_unit),
-                    stringResource(R.string.wind_speed_kmh_value)
+                    stringResource(R.string.wind_speed_kmh_unit)
                 ),
                 selectedIndex = if (windUnit == AppConstants.M_S) 0 else 1,
                 onSelectionChange = { index ->

@@ -1,12 +1,14 @@
 package com.example.weatherly.domain.model
 
 import androidx.room.Entity
-import androidx.room.PrimaryKey
 
-@Entity(tableName = "hourly_weather")
+@Entity(
+    tableName = "hourly_weather",
+    primaryKeys = ["time", "language"]
+)
 data class HourlyWeather(
-    @PrimaryKey
     val time: String,
+    val language: String,
     val temp: Int,
     val condition: String,
     val icon: Int

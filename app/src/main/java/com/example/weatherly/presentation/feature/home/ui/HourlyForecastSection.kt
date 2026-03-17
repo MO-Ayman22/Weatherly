@@ -19,7 +19,8 @@ import com.example.weatherly.domain.model.HourlyWeather
 @Composable
 fun HourlyForecastSection(
     modifier: Modifier = Modifier,
-    items: List<HourlyWeather>
+    items: List<HourlyWeather>,
+    tempResId: Int
 ) {
 
     Column {
@@ -38,7 +39,7 @@ fun HourlyForecastSection(
         ) {
 
             items(items.size) {
-                HourlyItem(items[it])
+                HourlyItem(items[it], tempResId)
             }
         }
     }

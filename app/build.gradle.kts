@@ -100,4 +100,5 @@ dependencies {
     implementation(libs.androidx.compose.material.icons.extended)
     implementation(libs.androidx.hilt.work)
     ksp(libs.androidx.hilt.compiler)
+    implementation("org.osmdroid:osmdroid-android:6.1.20")
 }

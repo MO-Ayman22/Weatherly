@@ -2,10 +2,7 @@ package com.example.weatherly.presentation.feature.onboarding.viewmodel
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.weatherly.domain.usecase.GetCurrentLocationUseCase
-import com.example.weatherly.domain.usecase.HasLocationPermissionUseCase
-import com.example.weatherly.domain.usecase.IsGpsEnabledUseCase
-import com.example.weatherly.domain.usecase.SaveLocationUseCase
+import com.example.weatherly.domain.repository.LocationRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import jakarta.inject.Inject
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -14,10 +11,7 @@ import kotlinx.coroutines.launch
 
 @HiltViewModel
 class OnboardingViewModel @Inject constructor(
-    private val isGpsEnabledUseCase: IsGpsEnabledUseCase,
-    private val getCurrentLocationUseCase: GetCurrentLocationUseCase,
-    private val saveLocationUseCase: SaveLocationUseCase,
-    private val hasLocationPermissionUseCase: HasLocationPermissionUseCase
+    private val locationRepository: LocationRepository,
 ) : ViewModel() {
 
     private val _locationState = MutableStateFlow(LocationState.NeedPermission)
@@ -28,10 +22,10 @@ class OnboardingViewModel @Inject constructor(
     }
 
     fun checkPermissionAndGps() {
-        val hasPermission = hasLocationPermissionUseCase()
+        val hasPermission = locationRepository.hasLocationPermission()
         _locationState.value = when {
             !hasPermission -> LocationState.NeedPermission
-            !isGpsEnabledUseCase() -> LocationState.GpsDisabled
+            !locationRepository.isGpsEnabled() -> LocationState.GpsDisabled
             else -> {
                 getLocation()
                 LocationState.Granted
@@ -39,19 +33,15 @@ class OnboardingViewModel @Inject constructor(
         }
     }
 
-    fun onPermissionResult(granted: Boolean) {
-        if (granted) {
-            checkPermissionAndGps()
-        } else {
-            _locationState.value = LocationState.NeedPermission
-        }
+    fun onPermissionResult() {
+        checkPermissionAndGps()
     }
 
     fun getLocation() {
         viewModelScope.launch {
-            val location = getCurrentLocationUseCase()
+            val location = locationRepository.getCurrentLocation()
             location?.let{
-                saveLocationUseCase(it)
+                locationRepository.saveLocation(it)
             }
         }
     }

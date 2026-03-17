@@ -2,23 +2,17 @@ package com.example.weatherly.presentation.feature.home.viewmodels
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.weatherly.domain.usecase.CheckInternetConnectionUseCase
-import com.example.weatherly.domain.usecase.GetCurrentLocationUseCase
-import com.example.weatherly.domain.usecase.GetCurrentWeatherUseCase
-import com.example.weatherly.domain.usecase.GetDailyWeatherUseCase
-import com.example.weatherly.domain.usecase.GetHourlyWeatherUseCase
-import com.example.weatherly.domain.usecase.GetSavedLocationUseCase
-import com.example.weatherly.domain.usecase.HasLocationPermissionUseCase
-import com.example.weatherly.domain.usecase.IsGpsEnabledUseCase
-import com.example.weatherly.domain.usecase.RefreshWeatherUseCase
-import com.example.weatherly.domain.usecase.SaveLocationUseCase
+import com.example.weatherly.core.NetworkChecker
+import com.example.weatherly.domain.repository.LocationRepository
+import com.example.weatherly.domain.repository.SettingsRepository
+import com.example.weatherly.domain.repository.WeatherRepository
+import com.example.weatherly.utils.AppConstants
 import dagger.hilt.android.lifecycle.HiltViewModel
 import jakarta.inject.Inject
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.SharedFlow
-import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asSharedFlow
+import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import java.text.SimpleDateFormat
 import java.util.Date
@@ -26,27 +20,20 @@ import java.util.Locale
 
 @HiltViewModel
 class HomeViewModel @Inject constructor(
-    private val refreshWeatherUseCase: RefreshWeatherUseCase,
-    private val getCurrentWeatherUseCase: GetCurrentWeatherUseCase,
-    private val getDailyWeatherUseCase: GetDailyWeatherUseCase,
-    private val getHourlyWeatherUseCase: GetHourlyWeatherUseCase,
-    private val getSavedLocationUseCase: GetSavedLocationUseCase,
-    private val checkInternetConnectionUseCase: CheckInternetConnectionUseCase,
-    private val saveLocationUseCase: SaveLocationUseCase,
-    private val hasLocationPermissionUseCase: HasLocationPermissionUseCase,
-    private val getCurrentLocationUseCase: GetCurrentLocationUseCase,
-    private val isGpsEnabledUseCase: IsGpsEnabledUseCase
+    private val weatherRepository: WeatherRepository,
+    private val locationRepository: LocationRepository,
+    private val networkChecker: NetworkChecker,
+    private val settingsRepository: SettingsRepository,
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow<HomeUiState>(HomeUiState.Loading)
-    val uiState: StateFlow<HomeUiState>
-        get() = _uiState
-    private val _snackbarEvent = MutableSharedFlow<String>()
-    val snackbarEvent: SharedFlow<String>
-        get() = _snackbarEvent
+    val uiState = _uiState.asStateFlow()
+
+    private val _uiEvent = MutableSharedFlow<UiEvent>()
+    val uiEvent = _uiEvent.asSharedFlow()
+
     private val _isRefreshing = MutableStateFlow(false)
-    val isRefreshing: StateFlow<Boolean>
-        get() = _isRefreshing
+    val isRefreshing = _isRefreshing.asStateFlow()
 
     init {
         loadWeatherOnStart()
@@ -54,112 +41,96 @@ class HomeViewModel @Inject constructor(
 
     fun loadWeatherOnStart() {
         viewModelScope.launch {
-            val location = try {
-                getSavedLocationUseCase()
-            } catch (_: Exception) {
-                null
-            }
-            val hasInternet = try {
-                checkInternetConnectionUseCase()
-            } catch (_: Exception) {
-                false
-            }
-            updateLocation()
+            _uiState.value = HomeUiState.Loading
+
             try {
-                if (hasInternet && location != null) {
-                    refreshWeatherUseCase(
+                updateLocation()
+                val location = locationRepository.getSavedLocation()
+                if (networkChecker.isConnected() && location != null) {
+                    weatherRepository.refreshWeather(
                         lat = location.first.toDouble(),
                         lon = location.second.toDouble()
                     )
                 }
-            } catch (e: Exception) {
-                if (e is java.net.SocketTimeoutException) {
-                    _snackbarEvent.emit("No internet connection")
-                } else {
-                    _snackbarEvent.emit("Failed to load weather")
-                }
+            } catch (_: Exception) {
+                _uiEvent.emit(UiEvent.ShowSnackbar("Failed to update weather data"))
             }
 
-            val current = getCurrentWeatherUseCase()
-            val hourly = getHourlyWeatherUseCase()
-            val daily = getDailyWeatherUseCase()
-
-            if (current != null) {
-                _uiState.value = HomeUiState.Success(
-                    current = current,
-                    hourly = hourly,
-                    daily = daily,
-                    date = getCurrentDateTime()
-                )
-            } else if (!hasInternet) {
-                _snackbarEvent.emit("No internet connection and no cached data")
-                _uiState.value = HomeUiState.NoConnection
-            }
+            loadDataFromCache()
         }
     }
 
     fun refreshWeatherManually() {
         viewModelScope.launch {
             _isRefreshing.value = true
-            updateLocation()
             try {
-                val location = getSavedLocationUseCase()
-                val hasInternet = checkInternetConnectionUseCase()
+                updateLocation()
+                val location = locationRepository.getSavedLocation()
+                val hasInternet = networkChecker.isConnected()
 
                 if (!hasInternet) {
-                    delay(100)
-                    _snackbarEvent.emit("No internet connection")
+                    _uiEvent.emit(UiEvent.ShowSnackbar("No internet connection available"))
                     return@launch
                 }
 
-                refreshWeatherUseCase(
-                    lat = location.first.toDouble(),
-                    lon = location.second.toDouble()
-                )
-
-                val current = getCurrentWeatherUseCase()
-                val hourly = getHourlyWeatherUseCase()
-                val daily = getDailyWeatherUseCase()
-                if (current == null) {
-                    _snackbarEvent.emit("Failed to refresh weather")
-                    return@launch
+                if (location != null) {
+                    weatherRepository.refreshWeather(
+                        lat = location.first.toDouble(),
+                        lon = location.second.toDouble()
+                    )
+                    _uiEvent.emit(UiEvent.ShowSnackbar("Weather updated successfully"))
+                    loadDataFromCache()
+                } else {
+                    _uiEvent.emit(UiEvent.ShowSnackbar("Please select a location first"))
                 }
 
-                _uiState.value = HomeUiState.Success(
-                    current = current,
-                    hourly = hourly,
-                    daily = daily,
-                    date = getCurrentDateTime()
-                )
-
-            } catch (_: Exception) {
-                _snackbarEvent.emit("Failed to refresh weather")
+            } catch (e: Exception) {
+                _uiEvent.emit(UiEvent.ShowSnackbar("Error: Could not refresh weather"))
             } finally {
                 _isRefreshing.value = false
             }
         }
     }
 
-    private fun updateLocation() {
-        viewModelScope.launch {
-            try {
-                if (hasLocationPermissionUseCase() && isGpsEnabledUseCase()) {
-                    val location = getCurrentLocationUseCase()
-                    if (location != null) {
-                        saveLocationUseCase(location)
-                    }
-                } else {
-                    _snackbarEvent.tryEmit("Access your location to get petter results")
-                }
+    private suspend fun loadDataFromCache() {
+        val current = weatherRepository.getCurrentWeather()
+        val hourly = weatherRepository.getHourlyWeather()
+        val daily = weatherRepository.getDailyWeather()
 
-            } catch (_: Exception) {
-                _snackbarEvent.emit("Failed to get location")
-            }
+        if (current != null) {
+            _uiState.value = HomeUiState.Success(
+                current = current,
+                hourly = hourly,
+                daily = daily,
+                date = getCurrentDateTime()
+            )
+        } else {
+            _uiState.value = HomeUiState.NoConnection
         }
     }
 
-    fun getCurrentDateTime(): String {
+    private suspend fun updateLocation() {
+        try {
+            val isGpsMethod = settingsRepository.getLocationMethod() == AppConstants.GPS_METHOD_KEY
+            if (networkChecker.isConnected() && locationRepository.isGpsEnabled() && isGpsMethod) {
+                locationRepository.getCurrentLocation()?.let {
+                    locationRepository.saveLocation(it)
+                }
+            }
+        } catch (_: Exception) {
+            _uiEvent.emit(UiEvent.ShowSnackbar("Unable to fetch your current location"))
+        }
+    }
+
+    fun getWindSpeedUnit() = settingsRepository.getWindSpeedUnit()
+    fun getTempUnit() = settingsRepository.getTempUnit()
+
+    private fun getCurrentDateTime(): String {
         val formatter = SimpleDateFormat("EEE, dd MMM • HH:mm", Locale.getDefault())
         return formatter.format(Date())
+    }
+
+    sealed class UiEvent {
+        data class ShowSnackbar(val message: String) : UiEvent()
     }
 }

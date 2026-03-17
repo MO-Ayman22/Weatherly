@@ -7,16 +7,17 @@ import androidx.work.ExistingPeriodicWorkPolicy
 import androidx.work.PeriodicWorkRequestBuilder
 import androidx.work.WorkManager
 import com.example.weatherly.data.worker.WeatherAlertWorker
-import com.example.weatherly.domain.model.AlertType
-import com.example.weatherly.domain.model.NotificationType
 import com.example.weatherly.domain.model.WeatherAlert
-import com.example.weatherly.domain.usecase.GetAlertsUseCase
-import com.example.weatherly.domain.usecase.InsertAlertUseCase
+import com.example.weatherly.domain.repository.AlertRepository
+import com.example.weatherly.utils.AppConstants
+import com.example.weatherly.utils.defaultAlerts
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dagger.hilt.android.qualifiers.ApplicationContext
 import jakarta.inject.Inject
+import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
@@ -24,12 +25,15 @@ import java.util.concurrent.TimeUnit
 
 @HiltViewModel
 class AlertViewModel @Inject constructor(
-    private val getAlertsUseCase: GetAlertsUseCase,
-    private val insertAlertUseCase: InsertAlertUseCase,
+    private val alertRepository: AlertRepository,
     @param:ApplicationContext private val context: Context
 ) : ViewModel() {
 
-    val alerts: StateFlow<List<WeatherAlert>> = getAlertsUseCase()
+
+    private val _uiEvent = MutableSharedFlow<UiEvent>()
+    val uiEvent = _uiEvent.asSharedFlow()
+
+    val alerts: StateFlow<List<WeatherAlert>> = alertRepository.getAlerts()
         .stateIn(viewModelScope, SharingStarted.Lazily, emptyList())
 
     init {
@@ -38,82 +42,71 @@ class AlertViewModel @Inject constructor(
 
     fun toggleAlert(alert: WeatherAlert, enabled: Boolean) {
         viewModelScope.launch {
-            alert.isEnabled = enabled
-            insertAlertUseCase(alert)
+            try {
+                alert.isEnabled = enabled
+                alertRepository.insertAlert(alert)
 
-            val hasEnabledAlert = alerts.value.any { it.isEnabled }
-            if (hasEnabledAlert) startWorker(context) else stopWorker(context)
+                val hasEnabledAlert = alerts.value.any { it.isEnabled }
+                if (hasEnabledAlert) startWorker(context) else stopWorker(context)
+
+                val message = if (enabled) "Alert enabled" else "Alert disabled"
+                _uiEvent.emit(UiEvent.ShowSnackbar(message))
+            } catch (e: Exception) {
+                _uiEvent.emit(UiEvent.ShowSnackbar("Failed to update alert: ${e.localizedMessage}"))
+            }
         }
     }
 
     fun updateAlert(alert: WeatherAlert) {
         viewModelScope.launch {
-            insertAlertUseCase(alert)
-            startWorker(context)
+            try {
+                alertRepository.insertAlert(alert)
+                startWorker(context)
+                _uiEvent.emit(UiEvent.ShowSnackbar("Settings saved successfully!"))
+            } catch (e: Exception) {
+                _uiEvent.emit(UiEvent.ShowSnackbar("Error saving settings"))
+            }
         }
     }
 
     private fun startWorker(context: Context) {
-        val request = PeriodicWorkRequestBuilder<WeatherAlertWorker>(15, TimeUnit.MINUTES)
-            .setInitialDelay(2, TimeUnit.MINUTES)
-            .build()
-        WorkManager.getInstance(context).enqueueUniquePeriodicWork(
-            "weather_alert_worker",
-            ExistingPeriodicWorkPolicy.REPLACE,
-            request
-        )
+        try {
+            val request = PeriodicWorkRequestBuilder<WeatherAlertWorker>(60, TimeUnit.MINUTES)
+                .setInitialDelay(2, TimeUnit.MINUTES)
+                .build()
+            WorkManager.getInstance(context).enqueueUniquePeriodicWork(
+                AppConstants.WORKER_NAME,
+                ExistingPeriodicWorkPolicy.REPLACE,
+                request
+            )
+        } catch (e: Exception) {
+            viewModelScope.launch {
+                _uiEvent.emit(UiEvent.ShowSnackbar("WorkManager Error"))
+            }
+        }
     }
 
     private fun stopWorker(context: Context) {
-        WorkManager.getInstance(context).cancelUniqueWork("weather_alert_worker")
+        WorkManager.getInstance(context).cancelUniqueWork(AppConstants.WORKER_NAME)
     }
 
     private fun loadAlerts() {
         viewModelScope.launch {
-
-            val list = getAlertsUseCase()
-            if (list.first().isEmpty()) {
-                val defaultAlerts = listOf(
-                    WeatherAlert(
-                        alarmType = AlertType.TEMP.name,
-                        start = 10f,
-                        end = 27f,
-                        min = -10f,
-                        max = 60f,
-                        notificationType = NotificationType.NOTIFICATION.name,
-                        notifyBeforeMinutes = 10,
-                        lastTriggered = null,
-                        isEnabled = false
-                    ),
-                    WeatherAlert(
-                        alarmType = AlertType.HUMIDITY.name,
-                        start = 60f,
-                        end = 70f,
-                        min = 0f,
-                        max = 100f,
-                        notificationType = NotificationType.NOTIFICATION.name,
-                        notifyBeforeMinutes = 10,
-                        lastTriggered = null,
-                        isEnabled = false
-                    ),
-                    WeatherAlert(
-                        alarmType = AlertType.PRESSURE.name,
-                        min = 950f,
-                        max = 1050f,
-                        start = 960f,
-                        end = 1000f,
-                        notificationType = NotificationType.NOTIFICATION.name,
-                        notifyBeforeMinutes = 10,
-                        lastTriggered = null,
-                        isEnabled = false
-                    )
-                )
-
-                defaultAlerts.forEach {
-                    insertAlertUseCase(it)
+            try {
+                val list = alertRepository.getAlerts().first()
+                if (list.isEmpty()) {
+                    defaultAlerts.forEach {
+                        alertRepository.insertAlert(it)
+                    }
                 }
+            } catch (e: Exception) {
+                _uiEvent.emit(UiEvent.ShowSnackbar("Error loading alerts"))
             }
         }
+    }
+
+    sealed class UiEvent {
+        data class ShowSnackbar(val message: String) : UiEvent()
     }
 }
 

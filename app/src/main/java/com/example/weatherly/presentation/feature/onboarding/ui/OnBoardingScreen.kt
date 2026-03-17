@@ -3,23 +3,24 @@ package com.example.weatherly.presentation.feature.onboarding.ui
 
 import android.Manifest.permission.ACCESS_FINE_LOCATION
 import android.content.Intent
+import android.net.Uri
+import android.provider.Settings
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.platform.LocalContext
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
-import com.example.weatherly.presentation.feature.onboarding.viewmodel.OnboardingViewModel
-import kotlinx.coroutines.launch
-import android.provider.Settings
-import androidx.compose.runtime.DisposableEffect
-import androidx.compose.runtime.getValue
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleEventObserver
 import androidx.lifecycle.compose.LocalLifecycleOwner
+import com.example.weatherly.presentation.feature.onboarding.viewmodel.OnboardingViewModel
+import kotlinx.coroutines.launch
 
 @Composable
 fun OnBoardingScreen(
@@ -35,7 +36,14 @@ fun OnBoardingScreen(
     val permissionLauncher = rememberLauncherForActivityResult(
         ActivityResultContracts.RequestPermission()
     ) { granted ->
-        viewModel.onPermissionResult(granted)
+        if (granted) {
+            viewModel.onPermissionResult()
+        } else {
+            val intent = Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS).apply {
+                data = Uri.fromParts("package", context.packageName, null)
+            }
+            context.startActivity(intent)
+        }
     }
 
     // Recheck GPS when user returns from settings

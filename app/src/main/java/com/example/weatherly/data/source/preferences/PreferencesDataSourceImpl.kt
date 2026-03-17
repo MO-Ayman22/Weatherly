@@ -31,6 +31,13 @@ class PreferencesDataSourceImpl @Inject constructor(
         }
     }
 
+    override fun saveLocation(lat: Double, lon: Double) {
+        prefs.edit {
+            putFloat(AppConstants.LOCATION_LATITUDE_KEY, lat.toFloat())
+            putFloat(AppConstants.LOCATION_LONGITUDE_KEY, lon.toFloat())
+        }
+    }
+
     override fun getLanguage(): String {
         return prefs.getString(AppConstants.LANGUAGE_KEY, AppConstants.ENGLISH).toString()
     }
@@ -48,12 +55,19 @@ class PreferencesDataSourceImpl @Inject constructor(
     }
 
     override fun getWindSpeedUnit(): String {
-        return prefs.getString(AppConstants.WIND_SPEED_KEY, AppConstants.KM_H).toString()
+        return prefs.getString(AppConstants.WIND_SPEED_KEY, AppConstants.M_S).toString()
     }
 
     override suspend fun saveWindSpeedUnit(unit: String) {
         prefs.edit { putString(AppConstants.WIND_SPEED_KEY, unit) }
     }
 
+    override fun getLocationMethod(): String {
+        return prefs.getString(AppConstants.LOCATION_METHOD_KEY, AppConstants.GPS_METHOD_KEY)
+            .toString()
+    }
 
+    override fun saveLocationMethod(method: String) {
+        prefs.edit { putString(AppConstants.LOCATION_METHOD_KEY, method) }
+    }
 }

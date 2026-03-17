@@ -6,5 +6,6 @@ data class SettingsUiState(
     val language: String = AppConstants.ENGLISH,
     val tempUnit: String = AppConstants.METRIC,
     val windUnit: String = AppConstants.M_S,
-    var isLoading: Boolean = false
+    val locationMethod: String = AppConstants.GPS_METHOD_KEY,
+    val isLoading: Boolean = false
 )

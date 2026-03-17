@@ -21,4 +21,7 @@ sealed class Route() {
 
     @Serializable
     object Alerts : Route()
+
+    @Serializable
+    object Map : Route()
 }

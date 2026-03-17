@@ -8,6 +8,7 @@ import android.content.Context
 import android.os.Build
 import androidx.hilt.work.HiltWorkerFactory
 import androidx.work.Configuration
+import com.example.weatherly.utils.AppConstants
 import dagger.hilt.android.HiltAndroidApp
 import javax.inject.Inject
 
@@ -32,7 +33,7 @@ class BaseApplication : Application(), Configuration.Provider {
             val descriptionText = "Notifications for severe weather conditions"
             val importance = NotificationManager.IMPORTANCE_HIGH
 
-            val channel = NotificationChannel("weather_alert_channel", name, importance).apply {
+            val channel = NotificationChannel(AppConstants.CHANNEL_ID_KEY, name, importance).apply {
                 description = descriptionText
             }
 

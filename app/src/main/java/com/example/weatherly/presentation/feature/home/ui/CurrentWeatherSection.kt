@@ -23,7 +23,7 @@ fun CurrentWeatherSection(
     temperature: String,
     condition: String,
     conditionDescription: String,
-    icon: Int
+    icon: Int,
 ) {
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,

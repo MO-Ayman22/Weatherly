@@ -2,6 +2,7 @@ package com.example.weatherly.di
 
 import com.example.weatherly.BuildConfig
 import com.example.weatherly.data.source.remote.api.ApiKeyInterceptor
+import com.example.weatherly.data.source.remote.api.GeoApiService
 import com.example.weatherly.data.source.remote.api.WeatherService
 import com.google.gson.GsonBuilder
 import dagger.Module
@@ -52,5 +53,11 @@ object NetworkModule {
     @Singleton
     fun provideWeatherService(retrofit: Retrofit): WeatherService {
         return retrofit.create(WeatherService::class.java)
+    }
+
+    @Provides
+    @Singleton
+    fun provideGeoApiService(retrofit: Retrofit): GeoApiService {
+        return retrofit.create(GeoApiService::class.java)
     }
 }

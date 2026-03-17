@@ -10,4 +10,7 @@ interface SettingsRepository {
 
     fun getWindSpeedUnit(): String
     suspend fun saveWindSpeedUnit(unit: String)
+    fun saveLocationMethod(locationMethod: String)
+
+    fun getLocationMethod(): String
 }

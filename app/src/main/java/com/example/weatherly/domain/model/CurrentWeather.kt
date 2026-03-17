@@ -1,21 +1,25 @@
 package com.example.weatherly.domain.model
 
 import androidx.room.Entity
-import androidx.room.PrimaryKey
 
-@Entity(tableName = "current_weather")
+@Entity(
+    tableName = "current_weather",
+    primaryKeys = ["location", "language"]
+)
 data class CurrentWeather(
-    @PrimaryKey val id: Int = 0,
     val location: String,
+    val language: String,
     val temperature: Int,
     val feelsLike: Int,
     val condition: String,
     val description: String,
     val icon: Int,
     val humidity: Int,
-    val windSpeed: Double,
+    val windSpeed: Int,
     val pressure: Int,
-    val clouds: Int
+    val clouds: Int,
+    val lat: Double,
+    val lon: Double
 )
 
 

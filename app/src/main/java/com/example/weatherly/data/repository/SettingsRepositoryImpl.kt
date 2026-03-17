@@ -31,4 +31,11 @@ class SettingsRepositoryImpl @Inject constructor(
         preferencesDataSource.saveWindSpeedUnit(unit)
     }
 
+    override fun saveLocationMethod(locationMethod: String) {
+        preferencesDataSource.saveLocationMethod(locationMethod)
+    }
+
+    override fun getLocationMethod(): String {
+        return preferencesDataSource.getLocationMethod()
+    }
 }

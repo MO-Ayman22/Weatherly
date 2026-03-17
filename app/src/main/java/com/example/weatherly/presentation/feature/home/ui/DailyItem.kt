@@ -19,12 +19,14 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.example.weatherly.domain.model.DailyWeather
 
 @Composable
 fun DailyItem(
-    item: DailyWeather
+    item: DailyWeather,
+    tempResId: Int
 ) {
     Row(
         modifier = Modifier
@@ -54,7 +56,7 @@ fun DailyItem(
         }
 
         Text(
-            text = "${item.temp}°",
+            text = "${item.temp}" + stringResource(tempResId),
             color = Color.White,
             style = MaterialTheme.typography.titleMedium
         )
